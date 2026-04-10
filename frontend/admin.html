@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header>
+    <h1>Admin Panel</h1>
+    <nav>
+      <a href="index.html">Customer</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+  </header>
+
+  <section>
+    <h2>Admin Login</h2>
+    <input type="text" id="username" placeholder="Username"/>
+    <input type="password" id="password" placeholder="Password"/>
+    <button id="loginBtn">Login</button>
+    <p id="loginMessage"></p>
+  </section>
+
+  <section>
+    <h2>Dashboard</h2>
+    <div id="stats"></div>
+  </section>
+
+  <section>
+    <h2>Update Order Stage</h2>
+    <input type="number" id="adminOrderId" placeholder="Order ID"/>
+    <input type="text" id="adminOrderStatus" placeholder="Status (Preparing / Out for Delivery / Delivered)"/>
+    <input type="text" id="adminPaymentStatus" placeholder="Payment (Paid / Unpaid)"/>
+    <button id="updateOrderBtn">Update Order</button>
+    <p id="updateMessage"></p>
+  </section>
+
+  <script src="admin.js"></script>
+</body>
+</html>
