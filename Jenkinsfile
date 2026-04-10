@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO_BACKEND = "lingalamadhu/food-backend"
-        DOCKER_HUB_REPO_FRONTEND = "lingalamadhu/food-frontend"
+        DOCKER_HUB_USERNAME = "nikhilabba12"
+        DOCKER_HUB_REPO_BACKEND = "${DOCKER_HUB_USERNAME}/food-backend"
+        DOCKER_HUB_REPO_FRONTEND = "${DOCKER_HUB_USERNAME}/food-frontend"
         IMAGE_TAG = "latest"
     }
 
@@ -55,7 +56,12 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    bat '@echo off && echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin'
+                    bat '''
+@echo off
+echo Logging into Docker Hub...
+echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
+'''
                 }
             }
         }
