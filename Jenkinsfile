@@ -5,40 +5,50 @@ pipeline {
         DOCKER_HUB_REPO_BACKEND = "nikhilabba12/food-backend"
         DOCKER_HUB_REPO_FRONTEND = "nikhilabba12/food-frontend"
         IMAGE_TAG = "latest"
-        RENDER_BACKEND_HOOK = credentials('render-backend-deploy-hook')
-        RENDER_FRONTEND_HOOK = credentials('render-frontend-deploy-hook')
+    }
+
+    options {
+        skipDefaultCheckout(true)
     }
 
     stages {
-        stage('Checkout') {
+        stage('SCM Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Verify Files') {
+        stage('Build Check') {
             steps {
                 bat 'dir'
                 bat 'if not exist backend\\Dockerfile exit /b 1'
                 bat 'if not exist frontend\\Dockerfile exit /b 1'
                 bat 'if not exist backend\\package.json exit /b 1'
                 bat 'if not exist backend\\server.js exit /b 1'
+                bat 'if not exist frontend\\index.html exit /b 1'
             }
         }
 
-        stage('Build Backend Image') {
+        stage('Test Backend') {
+            steps {
+                bat 'cd backend && npm install'
+                bat 'cd backend && npm list --depth=0'
+            }
+        }
+
+        stage('Build Docker Backend Image') {
             steps {
                 bat 'docker build -t %DOCKER_HUB_REPO_BACKEND%:%IMAGE_TAG% ./backend'
             }
         }
 
-        stage('Build Frontend Image') {
+        stage('Build Docker Frontend Image') {
             steps {
                 bat 'docker build -t %DOCKER_HUB_REPO_FRONTEND%:%IMAGE_TAG% ./frontend'
             }
         }
 
-        stage('Docker Hub Login') {
+        stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub-creds',
@@ -50,40 +60,28 @@ pipeline {
             }
         }
 
-        stage('Push Backend Image') {
+        stage('Docker Push Backend') {
             steps {
                 bat 'docker push %DOCKER_HUB_REPO_BACKEND%:%IMAGE_TAG%'
             }
         }
 
-        stage('Push Frontend Image') {
+        stage('Docker Push Frontend') {
             steps {
                 bat 'docker push %DOCKER_HUB_REPO_FRONTEND%:%IMAGE_TAG%'
-            }
-        }
-
-        stage('Trigger Render Backend Deploy') {
-            steps {
-                bat 'curl -X POST %RENDER_BACKEND_HOOK%'
-            }
-        }
-
-        stage('Trigger Render Frontend Deploy') {
-            steps {
-                bat 'curl -X POST %RENDER_FRONTEND_HOOK%'
             }
         }
     }
 
     post {
-        always {
-            bat 'docker logout'
-        }
         success {
             echo 'Pipeline completed successfully'
         }
         failure {
             echo 'Pipeline failed'
+        }
+        always {
+            echo 'Pipeline finished'
         }
     }
 }
