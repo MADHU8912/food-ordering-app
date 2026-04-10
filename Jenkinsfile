@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO_BACKEND = "nikhilabba12/food-backend"
-        DOCKER_HUB_REPO_FRONTEND = "nikhilabba12/food-frontend"
+        DOCKER_HUB_REPO_BACKEND = "lingalamadhu/food-backend"
+        DOCKER_HUB_REPO_FRONTEND = "lingalamadhu/food-frontend"
         IMAGE_TAG = "latest"
     }
 
